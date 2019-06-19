@@ -33,6 +33,16 @@ export function TitleLine(props) {
     )
 }
 
+export function GlobalTitle(props) {
+    return (
+        <div className="aux-margin">
+            <div className="title">
+                <p className="centered-line">{props.text}</p>
+            </div>
+        </div>
+    );
+}
+
 const APPS=[
     ['hole','树洞','/hole'],
     ['imasugu','教室','/spare_classroom'],

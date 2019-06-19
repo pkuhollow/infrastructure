@@ -75,3 +75,21 @@
     text-shadow: 0 0 5px rgba(0,0,0,.5);
     color: white;
 }
+
+.aux-margin {
+    width: calc(100% - 2 * 50px);
+    margin: 0 50px;
+}
+@media screen and (max-width: 1300px) {
+    .aux-margin {
+        width: calc(100% - 2 * 10px);
+        margin: 0 10px;
+    }
+}
+
+.title {
+    font-size: 1.5em;
+    height: 4rem;
+    padding-top: 1rem;
+    text-align: center;
+}
