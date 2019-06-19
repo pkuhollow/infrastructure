@@ -33,3 +33,45 @@
     background-color: #fff;
     box-shadow: 0 1px 1px #000;
 }
+
+.app-switcher {
+    display: flex;
+    height: 2em;
+    text-align: center;
+}
+.app-switcher-desc {
+    margin: 0 2em;
+    flex: 1 1 0;
+    opacity: .5;
+    height: 2em;
+    line-height: 2em;
+}
+@media screen and (max-width: 570px) {
+    .app-switcher-desc {
+        font-size: 0;
+    }
+}
+.app-switcher-left {
+    text-align: right;
+}
+.app-switcher-right {
+    text-align: left;
+}
+.app-switcher-item {
+    flex: 0 0 4em;
+    margin: .25em;
+    padding: 0 1em;
+    height: 1.5em;
+    line-height: 1.5em;
+    color: black;
+    border-radius: 1em;
+}
+.app-switcher-item:hover {
+    background-color: black;
+    color: white;
+}
+.app-switcher-item-current {
+    background-color: rgba(0,0,0,.5);
+    text-shadow: 0 0 5px rgba(0,0,0,.5);
+    color: white;
+}

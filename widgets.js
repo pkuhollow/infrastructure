@@ -32,3 +32,27 @@ export function TitleLine(props) {
         </p>
     )
 }
+
+const APPS=[
+    ['hole','树洞','/hole'],
+    ['imasugu','教室','/spare_classroom'],
+    ['score','成绩','/my_score'],
+];
+export function AppSwitcher(props) {
+    let cur_id=props.appid;
+    return (
+        <div className="app-switcher">
+            <span className="app-switcher-desc app-switcher-left">
+                PKUHelper
+            </span>
+            {APPS.map(([id,title,url])=>(
+                <a className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url}>
+                    {title}
+                </a>
+            ))}
+            <span className="app-switcher-desc  app-switcher-right">
+                网页版
+            </span>
+        </div>
+    );
+}
