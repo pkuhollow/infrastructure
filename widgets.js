@@ -56,7 +56,7 @@ export function AppSwitcher(props) {
                 PKUHelper
             </span>
             {APPS.map(([id,title,url])=>(
-                <a className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url}>
+                <a key={id} className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url}>
                     {title}
                 </a>
             ))}
