@@ -40,11 +40,12 @@
     text-align: center;
 }
 .app-switcher-desc {
-    margin: 0 2em;
+    margin: 0 1em;
     flex: 1 1 0;
     opacity: .5;
     height: 2em;
-    line-height: 2em;
+    line-height: 2rem;
+    font-size: .8em;
 }
 @media screen and (max-width: 570px) {
     .app-switcher-desc {
