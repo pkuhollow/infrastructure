@@ -52,6 +52,11 @@
         font-size: 0;
     }
 }
+
+.app-switcher-desc a {
+    color: unset;
+}
+
 .app-switcher-left {
     text-align: right;
 }

@@ -53,7 +53,7 @@ export function AppSwitcher(props) {
     return (
         <div className="app-switcher">
             <span className="app-switcher-desc app-switcher-left">
-                PKUHelper
+                <a href="/">PKUHelper</a>
             </span>
             {APPS.map(([id,title,url])=>(
                 <a key={id} className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url}>
