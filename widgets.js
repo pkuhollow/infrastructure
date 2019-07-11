@@ -33,6 +33,16 @@ export function TitleLine(props) {
     )
 }
 
+export function GlobalTitle(props) {
+    return (
+        <div className="aux-margin">
+            <div className="title">
+                <p className="centered-line">{props.text}</p>
+            </div>
+        </div>
+    );
+}
+
 const APPS=[
     ['hole','树洞','/hole'],
     ['imasugu','教室','/spare_classroom'],
@@ -43,10 +53,10 @@ export function AppSwitcher(props) {
     return (
         <div className="app-switcher">
             <span className="app-switcher-desc app-switcher-left">
-                PKUHelper
+                <a href="/">PKUHelper</a>
             </span>
             {APPS.map(([id,title,url])=>(
-                <a className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url}>
+                <a key={id} className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url}>
                     {title}
                 </a>
             ))}
