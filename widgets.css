@@ -65,6 +65,7 @@
     line-height: 1.5em;
     color: black;
     border-radius: 1em;
+    transition: unset; /* override ant design */
 }
 .app-switcher-item:hover {
     background-color: black;
