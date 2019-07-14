@@ -46,6 +46,7 @@ export function GlobalTitle(props) {
 const APPS=[
     ['hole','树洞','/hole'],
     ['imasugu','教室','/spare_classroom'],
+    ['syllabus','课表','/syllabus'],
     ['score','成绩','/my_score'],
 ];
 export function AppSwitcher(props) {
