@@ -52,12 +52,12 @@ export function GlobalTitle(props) {
 }
 
 const APPS=[
-    // id, text, url, icon_normal, icon_hover
-    ['hole','树洞','/hole',appicon_hole,appicon_hole],
-    ['imasugu','教室','/spare_classroom',appicon_imasugu,appicon_imasugu_rev],
-    ['syllabus','课表','/syllabus',appicon_syllabus,appicon_syllabus_rev],
-    ['score','成绩','/my_score',appicon_score,appicon_score],
-    ['course_survey','测评','http://courses.pinzhixiaoyuan.com/',appicon_course_survey,appicon_course_survey],
+    // id, text, url, icon_normal, icon_hover, new_tab
+    ['hole','树洞','/hole',appicon_hole,appicon_hole,false],
+    ['imasugu','教室','/spare_classroom',appicon_imasugu,appicon_imasugu_rev,false],
+    ['syllabus','课表','/syllabus',appicon_syllabus,appicon_syllabus_rev,false],
+    ['score','成绩','/my_score',appicon_score,appicon_score,false],
+    ['course_survey','测评','http://courses.pinzhixiaoyuan.com/',appicon_course_survey,appicon_course_survey,true],
 ];
 export function AppSwitcher(props) {
     let cur_id=props.appid;
@@ -66,8 +66,8 @@ export function AppSwitcher(props) {
             <span className="app-switcher-desc app-switcher-left">
                 <a href="/">PKUHelper</a>
             </span>
-            {APPS.map(([id,title,url,icon_normal,icon_hover])=>(
-                <a key={id} className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url}>
+            {APPS.map(([id,title,url,icon_normal,icon_hover,new_tab])=>(
+                <a key={id} className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url} target={new_tab ? '_blank' : '_self'}>
                     <img src={icon_normal} className="app-switcher-logo-normal" />
                     <img src={icon_hover} className="app-switcher-logo-hover" />
                     {title}
