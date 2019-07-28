@@ -40,7 +40,7 @@
     text-align: center;
 }
 .app-switcher-desc {
-    margin: 0 1em;
+    margin: 0 .5em;
     flex: 1 1 0;
     opacity: .5;
     height: 2em;
@@ -49,7 +49,11 @@
 }
 @media screen and (max-width: 570px) {
     .app-switcher-desc {
-        font-size: 0;
+        flex: 1 1 0;
+        display: none;
+    }
+    .app-switcher-item {
+        flex: 1 1 0 !important;
     }
 }
 
@@ -64,14 +68,24 @@
     text-align: left;
 }
 .app-switcher-item {
-    flex: 0 0 3.5em;
-    margin: .25em .125em;
-    height: 1.5em;
-    line-height: 1.5em;
+    flex: 0 0 4.5em;
+    padding: 0 .25em;
+    height: 2em;
+    line-height: 2em;
     color: black;
-    border-radius: 1em;
     transition: unset; /* override ant design */
 }
+.app-switcher-item img {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-right: .2rem;
+    position: relative;
+    top: .2rem;
+}
+.app-switcher-logo-hover {
+    margin-left: -1.4rem;
+}
+
 .app-switcher-item:hover {
     background-color: black;
     color: white;
@@ -81,6 +95,14 @@
     text-shadow: 0 0 5px rgba(0,0,0,.5);
     color: white;
 }
+
+.app-switcher-item:hover .app-switcher-logo-normal, .app-switcher-item-current .app-switcher-logo-normal {
+    opacity: 0;
+}
+.app-switcher-item:not(.app-switcher-item-current):not(:hover) .app-switcher-logo-hover {
+    opacity: 0;
+}
+
 
 .aux-margin {
     width: calc(100% - 2 * 50px);
