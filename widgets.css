@@ -81,6 +81,7 @@
     margin-right: .2rem;
     position: relative;
     top: .2rem;
+    vertical-align: unset; /* override ant design */
 }
 .app-switcher-logo-hover {
     margin-left: -1.4rem;
