@@ -38,6 +38,7 @@
     display: flex;
     height: 2em;
     text-align: center;
+    margin: 0 .1em;
 }
 .app-switcher-desc {
     margin: 0 .5em;
@@ -68,11 +69,12 @@
     text-align: left;
 }
 .app-switcher-item {
-    flex: 0 0 4.5em;
-    padding: 0 .25em;
-    height: 2em;
-    line-height: 2em;
+    flex: 0 0 4.3em;
+    border-radius: 3px;
+    height: 1.6em;
+    line-height: 1.6em;
     color: black;
+    margin: .2em .1em;
     transition: unset; /* override ant design */
 }
 .app-switcher-item img {
@@ -92,7 +94,7 @@
     color: white;
 }
 .app-switcher-item-current {
-    background-color: rgba(0,0,0,.5);
+    background-color: rgba(0,0,0,.4);
     text-shadow: 0 0 5px rgba(0,0,0,.5);
     color: white;
 }

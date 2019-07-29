@@ -11,7 +11,6 @@ import appicon_hole from './appicon/hole.png';
 import appicon_imasugu from './appicon/imasugu.png';
 import appicon_imasugu_rev from './appicon/imasugu_rev.png';
 import appicon_syllabus from './appicon/syllabus.png';
-import appicon_syllabus_rev from './appicon/syllabus_rev.png';
 import appicon_score from './appicon/score.png';
 import appicon_course_survey from './appicon/course_survey.png';
 
@@ -55,7 +54,7 @@ const APPS=[
     // id, text, url, icon_normal, icon_hover, new_tab
     ['hole','树洞','/hole',appicon_hole,appicon_hole,false],
     ['imasugu','教室','/spare_classroom',appicon_imasugu,appicon_imasugu_rev,false],
-    ['syllabus','课表','/syllabus',appicon_syllabus,appicon_syllabus_rev,false],
+    ['syllabus','课表','/syllabus',appicon_syllabus,appicon_syllabus,false],
     ['score','成绩','/my_score',appicon_score,appicon_score,false],
     ['course_survey','测评','http://courses.pinzhixiaoyuan.com/',appicon_course_survey,appicon_course_survey,true],
 ];
