@@ -3,8 +3,8 @@ const DUMP_VER='dump_v1';
 function dump() {
     return JSON.stringify({
         _dump_ver: DUMP_VER,
-        token: localStorage['TOKEN'],
-        hole_config: localStorage['hole_config'],
+        token: localStorage['TOKEN']||null,
+        hole_config: localStorage['hole_config']||null,
     });
 }
 function load(s) {
@@ -14,11 +14,11 @@ function load(s) {
         console.error('elevator: loading version mismatch, current',DUMP_VER,'param',obj._dump_ver);
         return;
     }
-    if(localStorage['TOKEN']===undefined) {
+    if(localStorage['TOKEN']===undefined && obj.token) {
         console.log('replace token');
         localStorage['TOKEN']=obj.token;
     }
-    if(localStorage['hole_config']===undefined) {
+    if(localStorage['hole_config']===undefined && obj.hole_config) {
         console.log('replace hole config');
         localStorage['hole_config']=obj.hole_config;
     }
