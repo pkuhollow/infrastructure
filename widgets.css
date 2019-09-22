@@ -73,7 +73,8 @@
         display: none;
     }
     .app-switcher-item {
-        flex: 1 1 0 !important;
+        flex: 1 1 auto !important;
+        padding: 0 !important;
     }
 }
 
@@ -88,24 +89,27 @@
     text-align: left;
 }
 .app-switcher-item {
-    flex: 0 0 4.3em;
+    flex: 0 0 auto;
     border-radius: 3px;
     height: 1.6em;
     line-height: 1.6em;
     color: black;
     margin: .2em .1em;
+    padding: 0 .45em;
     transition: unset; /* override ant design */
 }
 .app-switcher-item img {
     width: 1.2rem;
     height: 1.2rem;
-    margin-right: .2rem;
     position: relative;
     top: .2rem;
     vertical-align: unset; /* override ant design */
 }
+.app-switcher-item span:not(:empty) {
+    margin-left: .2rem;
+}
 .app-switcher-logo-hover {
-    margin-left: -1.4rem;
+    margin-left: -1.2rem;
 }
 
 .app-switcher-item:hover {
