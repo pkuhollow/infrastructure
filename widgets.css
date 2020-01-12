@@ -146,12 +146,15 @@
     opacity: 1 !important;
 }
 
+.pkuhelper-login-popup {
+    font-size: 1rem;
+}
 .pkuhelper-login-popup p {
     margin: 1em 0;
     text-align: center;
 }
 .pkuhelper-login-popup input {
-    width: 6rem;
+    width: 8rem;
     border-radius: 5px;
     border: 1px solid black;
     outline: none;
@@ -195,7 +198,7 @@
     position: fixed;
     left: 50%;
     top: 50%;
-    width: 300px;
+    width: 320px;
     z-index: 114515;
     transform: translateX(-50%) translateY(-50%);
     border-radius: 5px;

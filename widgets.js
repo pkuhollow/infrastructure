@@ -3,6 +3,7 @@ import React, {Component, PureComponent} from 'react';
 import TimeAgo from 'react-timeago';
 import chineseStrings from 'react-timeago/lib/language-strings/zh-CN';
 import buildFormatter from 'react-timeago/lib/formatters/buildFormatter';
+import {componentWillAppendToBody} from "react-append-to-body";
 
 import './global.css';
 import './widgets.css';
@@ -140,24 +141,15 @@ export class AppSwitcher extends Component {
     }
 }
 
-export class LoginPopup extends Component {
+class LoginPopupSelf extends Component {
     constructor(props) {
         super(props);
         this.state={
-            popup_show: false,
             loading_status: 'idle',
         };
         this.username_ref=React.createRef();
         this.password_ref=React.createRef();
         this.input_token_ref=React.createRef();
-
-        this.on_popup_bound=this.on_popup.bind(this);
-    }
-
-    on_popup() {
-        this.setState({
-            popup_show: true,
-        });
     }
 
     do_sendcode(api_name) {
@@ -267,63 +259,86 @@ export class LoginPopup extends Component {
         });
     }
 
-    render_popup() {
+    render() {
         return (
-            <div className="pkuhelper-login-popup">
-                <p>
-                    接收验证码来登录 PKU Helper
-                </p>
-                <p>
-                    <label>
-                        　学号&nbsp;
-                        <input ref={this.username_ref} type="tel" autoFocus={true} />
-                    </label>
-                    <span className="pkuhelper-login-type">
-                            <a onClick={(e)=>this.do_sendcode('validcode')}>
-                                &nbsp;短信&nbsp;
-                            </a>
-                            /
-                            <a onClick={(e)=>this.do_sendcode('validcode2mail')}>
-                                &nbsp;邮件&nbsp;
-                            </a>
-                        </span>
-                </p>
-                <p>
-                    <label>
-                        验证码&nbsp;
-                        <input ref={this.password_ref} type="tel" />
-                    </label>
-                    <button type="button" disabled={this.state.loading_status==='loading'}
-                            onClick={(e)=>this.do_login(this.props.token_callback)}>
-                        登录
-                    </button>
-                </p>
-                <hr />
-                <p>从其他设备导入登录状态</p>
-                <p>
-                    <input ref={this.input_token_ref} placeholder="User Token" />
-                    <button type="button" disabled={this.state.loading_status==='loading'}
-                            onClick={(e)=>this.do_input_token(this.props.token_callback)}>
-                        导入
-                    </button>
-                </p>
-                <hr />
-                <p>
-                    <button onClick={()=>{this.setState({popup_show: false});}}>
-                        取消
-                    </button>
-                </p>
+            <div>
+                <div className="pkuhelper-login-popup-shadow" />
+                <div className="pkuhelper-login-popup">
+                    <p>
+                        接收验证码来登录 PKU Helper
+                    </p>
+                    <p>
+                        <label>
+                            　学号&nbsp;
+                            <input ref={this.username_ref} type="tel" autoFocus={true} />
+                        </label>
+                        <span className="pkuhelper-login-type">
+                                <a onClick={(e)=>this.do_sendcode('validcode')}>
+                                    &nbsp;短信&nbsp;
+                                </a>
+                                /
+                                <a onClick={(e)=>this.do_sendcode('validcode2mail')}>
+                                    &nbsp;邮件&nbsp;
+                                </a>
+                            </span>
+                    </p>
+                    <p>
+                        <label>
+                            验证码&nbsp;
+                            <input ref={this.password_ref} type="tel" />
+                        </label>
+                        <button type="button" disabled={this.state.loading_status==='loading'}
+                                onClick={(e)=>this.do_login(this.props.token_callback)}>
+                            登录
+                        </button>
+                    </p>
+                    <hr />
+                    <p>从其他设备导入登录状态</p>
+                    <p>
+                        <input ref={this.input_token_ref} placeholder="User Token" />
+                        <button type="button" disabled={this.state.loading_status==='loading'}
+                                onClick={(e)=>this.do_input_token(this.props.token_callback)}>
+                            导入
+                        </button>
+                    </p>
+                    <hr />
+                    <p>
+                        <button onClick={this.props.on_close}>
+                            取消
+                        </button>
+                    </p>
+                </div>
             </div>
         );
     }
-    render_shadow() {
-        return (
-            <div className="pkuhelper-login-popup-shadow" />
-        );
+}
+let AppendedLoginPopupSelf=componentWillAppendToBody(LoginPopupSelf);
+
+export class LoginPopup extends Component {
+    constructor(props) {
+        super(props);
+        this.state={
+            popup_show: false,
+        };
+        this.on_popup_bound=this.on_popup.bind(this);
+        this.on_close_bound=this.on_close.bind(this);
+    }
+
+    on_popup() {
+        this.setState({
+            popup_show: true,
+        });
+    }
+    on_close() {
+        this.setState({
+            popup_show: false,
+        });
     }
 
     render() {
         let ch=this.props.children(this.on_popup_bound);
-        return this.state.popup_show ? [ch,this.render_popup(),this.render_shadow()] : [ch];
+        return this.state.popup_show ?
+            [ch, <AppendedLoginPopupSelf token_callback={this.props.token_callback} on_close={this.on_close_bound} />] :
+            [ch];
     }
 }
