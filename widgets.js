@@ -14,7 +14,9 @@ import appicon_syllabus from './appicon/syllabus.png';
 import appicon_score from './appicon/score.png';
 import appicon_course_survey from './appicon/course_survey.png';
 import {PKUHELPER_ROOT} from './const';
-import {get_json} from './functions';
+import {get_json, API_VERSION_PARAM} from './functions';
+
+const LOGIN_BASE=PKUHELPER_ROOT+'services/login';
 
 function pad2(x) {
     return x<10 ? '0'+x : ''+x;
@@ -135,5 +137,193 @@ export class AppSwitcher extends Component {
                 </span>
             </div>
         );
+    }
+}
+
+export class LoginPopup extends Component {
+    constructor(props) {
+        super(props);
+        this.state={
+            popup_show: false,
+            loading_status: 'idle',
+        };
+        this.username_ref=React.createRef();
+        this.password_ref=React.createRef();
+        this.input_token_ref=React.createRef();
+
+        this.on_popup_bound=this.on_popup.bind(this);
+    }
+
+    on_popup() {
+        this.setState({
+            popup_show: true,
+        });
+    }
+
+    do_sendcode(api_name) {
+        if(this.state.loading_status==='loading')
+            return;
+
+        this.setState({
+            loading_status: 'loading',
+        },()=>{
+            fetch(
+                PKUHELPER_ROOT+'api_xmcp/isop/'+api_name
+                +'?user='+encodeURIComponent(this.username_ref.current.value)
+                +API_VERSION_PARAM()
+            )
+                .then(get_json)
+                .then((json)=>{
+                    console.log(json);
+                    if(!json.success)
+                        throw new Error(JSON.stringify(json));
+
+                    alert(json.msg);
+                    this.setState({
+                        loading_status: 'done',
+                    });
+                })
+                .catch((e)=>{
+                    console.error(e);
+                    alert('发送失败\n'+e);
+                    this.setState({
+                        loading_status: 'done',
+                    });
+                });
+
+        });
+    }
+
+    do_login(set_token) {
+        if(this.state.loading_status==='loading')
+            return;
+
+        this.setState({
+            loading_status: 'loading',
+        },()=>{
+            let data=new URLSearchParams();
+            data.append('username', this.username_ref.current.value);
+            data.append('valid_code', this.password_ref.current.value);
+            data.append('isnewloginflow', 'true');
+            fetch(LOGIN_BASE+'/login.php?platform=webhole'+API_VERSION_PARAM(), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: data,
+            })
+                .then(get_json)
+                .then((json)=>{
+                    if(json.code!==0) {
+                        if(json.msg) throw new Error(json.msg);
+                        throw new Error(JSON.stringify(json));
+                    }
+
+                    set_token(json.user_token);
+                    alert(`成功以 ${json.name} 的身份登录`);
+                    this.setState({
+                        loading_status: 'done',
+                        popup_show: false,
+                    });
+                })
+                .catch((e)=>{
+                    console.error(e);
+                    alert('登录失败\n'+e);
+                    this.setState({
+                        loading_status: 'done',
+                    });
+                });
+        });
+    }
+
+    do_input_token(set_token) {
+        if(this.state.loading_status==='loading')
+            return;
+
+        let token=this.input_token_ref.current.value;
+        this.setState({
+            loading_status: 'loading',
+        },()=>{
+            fetch(PKUHELPER_ROOT+'api_xmcp/hole/system_msg?user_token='+encodeURIComponent(token)+API_VERSION_PARAM())
+                .then((res)=>res.json())
+                .then((json)=>{
+                    if(json.error)
+                        throw new Error(json.error);
+                    if(json.result.length===0)
+                        throw new Error('result check failed');
+                    this.setState({
+                        loading_status: 'done',
+                        popup_show: false,
+                    });
+                    set_token(token);
+                })
+                .catch((e)=>{
+                    alert('Token检验失败\n'+e);
+                    this.setState({
+                        loading_status: 'done',
+                    });
+                    console.error(e);
+                });
+        });
+    }
+
+    render_popup() {
+        return (
+            <div className="pkuhelper-login-popup">
+                <p>
+                    接收验证码来登录 PKU Helper
+                </p>
+                <p>
+                    <label>
+                        　学号&nbsp;
+                        <input ref={this.username_ref} type="tel" autoFocus={true} />
+                    </label>
+                    <span className="pkuhelper-login-type">
+                            <a onClick={(e)=>this.do_sendcode('validcode')}>
+                                &nbsp;短信&nbsp;
+                            </a>
+                            /
+                            <a onClick={(e)=>this.do_sendcode('validcode2mail')}>
+                                &nbsp;邮件&nbsp;
+                            </a>
+                        </span>
+                </p>
+                <p>
+                    <label>
+                        验证码&nbsp;
+                        <input ref={this.password_ref} type="tel" />
+                    </label>
+                    <button type="button" disabled={this.state.loading_status==='loading'}
+                            onClick={(e)=>this.do_login(this.props.token_callback)}>
+                        登录
+                    </button>
+                </p>
+                <hr />
+                <p>从其他设备导入登录状态</p>
+                <p>
+                    <input ref={this.input_token_ref} placeholder="User Token" />
+                    <button type="button" disabled={this.state.loading_status==='loading'}
+                            onClick={(e)=>this.do_input_token(this.props.token_callback)}>
+                        导入
+                    </button>
+                </p>
+                <hr />
+                <p>
+                    <button onClick={()=>{this.setState({popup_show: false});}}>
+                        取消
+                    </button>
+                </p>
+            </div>
+        );
+    }
+    render_shadow() {
+        return (
+            <div className="pkuhelper-login-popup-shadow" />
+        );
+    }
+
+    render() {
+        let ch=this.props.children(this.on_popup_bound);
+        return this.state.popup_show ? [ch,this.render_popup(),this.render_shadow()] : [ch];
     }
 }
