@@ -1,4 +1,5 @@
 import React, {Component, PureComponent} from 'react';
+import ReactDOM from 'react-dom';
 
 import TimeAgo from 'react-timeago';
 import chineseStrings from 'react-timeago/lib/language-strings/zh-CN';
@@ -18,6 +19,7 @@ import {PKUHELPER_ROOT} from './const';
 import {get_json, API_VERSION_PARAM} from './functions';
 
 const LOGIN_BASE=PKUHELPER_ROOT+'services/login';
+const LOGIN_POPUP_ANCHOR_ID='pkuhelper_login_popup_anchor';
 
 function pad2(x) {
     return x<10 ? '0'+x : ''+x;
@@ -150,6 +152,13 @@ class LoginPopupSelf extends Component {
         this.username_ref=React.createRef();
         this.password_ref=React.createRef();
         this.input_token_ref=React.createRef();
+
+        this.popup_anchor=document.getElementById(LOGIN_POPUP_ANCHOR_ID);
+        if(!this.popup_anchor) {
+            this.popup_anchor=document.createElement('div');
+            this.popup_anchor.id=LOGIN_POPUP_ANCHOR_ID;
+            document.body.appendChild(this.popup_anchor);
+        }
     }
 
     do_sendcode(api_name) {
@@ -260,7 +269,7 @@ class LoginPopupSelf extends Component {
     }
 
     render() {
-        return (
+        return ReactDOM.createPortal(
             <div>
                 <div className="pkuhelper-login-popup-shadow" />
                 <div className="pkuhelper-login-popup">
@@ -308,11 +317,11 @@ class LoginPopupSelf extends Component {
                         </button>
                     </p>
                 </div>
-            </div>
+            </div>,
+            this.popup_anchor,
         );
     }
 }
-let AppendedLoginPopupSelf=componentWillAppendToBody(LoginPopupSelf);
 
 export class LoginPopup extends Component {
     constructor(props) {
@@ -338,7 +347,7 @@ export class LoginPopup extends Component {
     render() {
         let ch=this.props.children(this.on_popup_bound);
         return this.state.popup_show ?
-            [ch, <AppendedLoginPopupSelf token_callback={this.props.token_callback} on_close={this.on_close_bound} />] :
+            [ch, <LoginPopupSelf token_callback={this.props.token_callback} on_close={this.on_close_bound} />] :
             [ch];
     }
 }
