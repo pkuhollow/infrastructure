@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import TimeAgo from 'react-timeago';
 import chineseStrings from 'react-timeago/lib/language-strings/zh-CN';
 import buildFormatter from 'react-timeago/lib/formatters/buildFormatter';
-import {componentWillAppendToBody} from "react-append-to-body";
 
 import './global.css';
 import './widgets.css';
