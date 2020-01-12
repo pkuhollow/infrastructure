@@ -149,6 +149,9 @@
 .pkuhelper-login-popup {
     font-size: 1rem;
 }
+.pkuhelper-login-popup a {
+    color: #00c;
+}
 .pkuhelper-login-popup p {
     margin: 1em 0;
     text-align: center;
