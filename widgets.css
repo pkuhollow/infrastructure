@@ -148,6 +148,15 @@
 
 .pkuhelper-login-popup {
     font-size: 1rem;
+    background-color: #f7f7f7;
+    color: black;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 320px;
+    z-index: 114515;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius: 5px;
 }
 .pkuhelper-login-popup a {
     color: #00c;
@@ -195,16 +204,6 @@
     height: 100%;
     width: 100%;
     z-index: 114514;
-}
-.pkuhelper-login-popup {
-    background-color: #f7f7f7;
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    width: 320px;
-    z-index: 114515;
-    transform: translateX(-50%) translateY(-50%);
-    border-radius: 5px;
 }
 
 .aux-margin {
