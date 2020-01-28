@@ -165,6 +165,10 @@
     margin: 1em 0;
     text-align: center;
 }
+/* override ant design */
+.pkuhelper-login-popup input, .pkuhelper-login-popup button {
+    font-size: .85em;
+}
 .pkuhelper-login-popup input {
     width: 8rem;
     border-radius: 5px;
