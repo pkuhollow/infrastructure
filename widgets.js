@@ -14,6 +14,9 @@ import appicon_imasugu_rev from './appicon/imasugu_rev.png';
 import appicon_syllabus from './appicon/syllabus.png';
 import appicon_score from './appicon/score.png';
 import appicon_course_survey from './appicon/course_survey.png';
+import appicon_dropdown from './appicon/dropdown.png';
+import appicon_dropdown_rev from './appicon/dropdown_rev.png';
+import appicon_homepage from './appicon/homepage.png';
 import {PKUHELPER_ROOT} from './const';
 import {get_json, API_VERSION_PARAM} from './functions';
 
@@ -56,15 +59,20 @@ export function GlobalTitle(props) {
     );
 }
 
-const FALLBACK_APPS=[
+const FALLBACK_APPS={
     // id, text, url, icon_normal, icon_hover, new_tab
-    ['hole','树洞','/hole',appicon_hole,null,false],
-    ['imasugu','教室','/spare_classroom',appicon_imasugu,appicon_imasugu_rev,false],
-    ['syllabus','课表','/syllabus',appicon_syllabus,null,false],
-    ['score','成绩','/my_score',appicon_score,null,false],
-    ['course_survey','测评','http://courses.pinzhixiaoyuan.com/',appicon_course_survey,appicon_course_survey,true],
-];
-const SWITCHER_DATA_VER='switcher_1';
+    bar: [
+        ['hole', '树洞', '/hole', appicon_hole, null, false],
+        ['imasugu', '教室', '/spare_classroom', appicon_imasugu, appicon_imasugu_rev, false],
+        ['syllabus', '课表', '/syllabus', appicon_syllabus, null, false],
+        ['score', '成绩', '/my_score', appicon_score, null, false],
+    ],
+    dropdown: [
+        ['course_survey', '课程测评', 'https://courses.pinzhixiaoyuan.com/', appicon_course_survey, null, true],
+        ['homepage', '客户端', '/', appicon_homepage, null, true],
+    ],
+};
+const SWITCHER_DATA_VER='switcher_2';
 const SWITCHER_DATA_URL=PKUHELPER_ROOT+'web_static/appswitcher_items.json';
 
 export class AppSwitcher extends Component {
@@ -80,7 +88,7 @@ export class AppSwitcher extends Component {
         if(localStorage['APPSWITCHER_ITEMS'])
             try {
                 let content=JSON.parse(localStorage['APPSWITCHER_ITEMS'])[SWITCHER_DATA_VER];
-                if(!content || !content.length)
+                if(!content || !content.bar)
                     throw new Error('content is empty');
 
                 ret=content;
@@ -120,23 +128,62 @@ export class AppSwitcher extends Component {
 
     render() {
         let cur_id=this.props.appid;
+
+        function app_elem([id,title,url,icon_normal,icon_hover,new_tab],no_class=false,ref=null) {
+            return (
+                <a ref={ref} key={id} className={no_class ? null : ('app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : ''))}
+                   href={url} target={new_tab ? '_blank' : '_self'}>
+                    {!!icon_normal && [
+                        <img key="normal" src={icon_normal} className="app-switcher-logo-normal" />,
+                        <img key="hover" src={icon_hover||icon_normal} className="app-switcher-logo-hover" />
+                    ]}
+                    <span>{title}</span>
+                </a>
+            );
+        }
+
+        let dropdown_cur_app=null;
+        this.state.apps.dropdown.forEach((app)=>{
+            if(app[0]===cur_id)
+                dropdown_cur_app=app;
+        });
+
+        //console.log(JSON.stringify(this.state.apps));
+
         return (
             <div className="app-switcher">
-                <span className="app-switcher-desc app-switcher-left">
-                    <a href="/">PKUHelper</a>
-                </span>
-                {this.state.apps.map(([id,title,url,icon_normal,icon_hover,new_tab])=>(
-                    <a key={id} className={'app-switcher-item'+(id===cur_id ? ' app-switcher-item-current' : '')} href={url} target={new_tab ? '_blank' : '_self'}>
-                        {!!icon_normal && [
-                            <img key="normal" src={icon_normal} className="app-switcher-logo-normal" />,
-                            <img key="hover" src={icon_hover||icon_normal} className="app-switcher-logo-hover" />
-                        ]}
-                        <span>{title}</span>
-                    </a>
-                ))}
-                <span className="app-switcher-desc  app-switcher-right">
-                    网页版
-                </span>
+                <span className="app-switcher-desc app-switcher-left" />
+                {this.state.apps.bar.map((app)=>
+                    app_elem(app)
+                )}
+                {!!this.state.apps.dropdown.length &&
+                    <div className={
+                        'app-switcher-item app-switcher-dropdown '
+                        +(dropdown_cur_app ? ' app-switcher-item-current' : '')
+                    }>
+                        <p className="app-switcher-dropdown-title">
+                            {!!dropdown_cur_app ?
+                                app_elem((()=>{
+                                    let [id,title,_url,icon_normal,icon_hover,_new_tab]=dropdown_cur_app;
+                                    return [id,title+'▾',null,icon_normal,icon_hover,false];
+                                })(),true) :
+                                app_elem(['-placeholder-elem','更多▾',null,appicon_dropdown,appicon_dropdown_rev,false],true)
+                            }
+                        </p>
+                        {this.state.apps.dropdown.map((app)=>{
+                            let ref=React.createRef();
+                            return (
+                                <p key={app[0]} className="app-switcher-dropdown-item" onClick={(e)=>{
+                                    if(!e.target.closest('a') && ref.current)
+                                        ref.current.click();
+                                }}>
+                                    {app_elem(app,true,ref)}
+                                </p>
+                            );
+                        })}
+                    </div>
+                }
+                <span className="app-switcher-desc app-switcher-right" />
             </div>
         );
     }

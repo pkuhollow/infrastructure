@@ -73,9 +73,23 @@
         display: none;
     }
     .app-switcher-item {
-        flex: 1 1 auto !important;
+        flex: 1 1 0 !important;
         padding: 0 !important;
     }
+    .app-switcher-dropdown-title {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        text-align: center !important;
+    }
+    .app-switcher-dropdown-item {
+        margin-left: -2em !important;
+        margin-right: 0 !important;
+    }
+}
+
+.app-switcher a:hover { /* reset underline from /hole style */
+    border-bottom: unset;
+    margin-bottom: unset;
 }
 
 .app-switcher-desc a {
@@ -93,10 +107,12 @@
     border-radius: 3px;
     height: 1.6em;
     line-height: 1.6em;
-    color: black;
     margin: .2em .1em;
     padding: 0 .45em;
+}
+a.app-switcher-item, .app-switcher-item a {
     transition: unset; /* override ant design */
+    color: black;
 }
 .app-switcher-item img {
     width: 1.2rem;
@@ -114,12 +130,18 @@
 
 .app-switcher-item:hover {
     background-color: black;
-    color: white;
+    color: white !important;
+}
+.app-switcher-item:hover a {
+    color: white !important;
 }
 .app-switcher-item-current {
     background-color: rgba(0,0,0,.4);
     text-shadow: 0 0 5px rgba(0,0,0,.5);
-    color: white;
+    color: white !important;
+}
+.app-switcher-item-current a {
+    color: white !important;
 }
 
 .root-dark-mode .app-switcher-item {
@@ -144,6 +166,46 @@
 }
 .root-dark-mode .app-switcher-logo-hover {
     opacity: 1 !important;
+}
+
+.app-switcher-dropdown {
+    padding: 0;
+    text-align: left;
+}
+
+.app-switcher-dropdown:not(:hover) {
+    max-height: 1.6rem;
+    overflow: hidden;
+}
+
+.app-switcher-dropdown-item {
+    background-color: hsla(0,0%,35%,.9);
+    padding: .125em .25em;
+    margin-left: -.75em;
+    margin-right: -.75em;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+}
+.app-switcher-dropdown-item:hover {
+    background-color: rgba(0,0,0,.9);
+}
+.app-switcher-dropdown-item:nth-child(2) {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.app-switcher-dropdown-item:last-child {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.app-switcher-dropdown-title {
+    padding-bottom: .2em;
+    padding-left: .5em;
+    padding-right: .25em;
+}
+.app-switcher-dropdown-title a {
+    cursor: unset;
 }
 
 .pkuhelper-login-popup {
