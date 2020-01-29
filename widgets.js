@@ -270,8 +270,8 @@ class LoginPopupSelf extends Component {
                     alert(`成功以 ${json.name} 的身份登录`);
                     this.setState({
                         loading_status: 'done',
-                        popup_show: false,
                     });
+                    this.props.on_close();
                 })
                 .catch((e)=>{
                     console.error(e);
@@ -300,9 +300,9 @@ class LoginPopupSelf extends Component {
                         throw new Error('result check failed');
                     this.setState({
                         loading_status: 'done',
-                        popup_show: false,
                     });
                     set_token(token);
+                    this.props.on_close();
                 })
                 .catch((e)=>{
                     alert('Token检验失败\n'+e);
