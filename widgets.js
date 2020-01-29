@@ -152,7 +152,7 @@ export class AppSwitcher extends Component {
 
         return (
             <div className="app-switcher">
-                <span className="app-switcher-desc app-switcher-left" />
+                <span className="app-switcher-desc app-switcher-left">PKUHelper</span>
                 {this.state.apps.bar.map((app)=>
                     app_elem(app)
                 )}
@@ -183,7 +183,7 @@ export class AppSwitcher extends Component {
                         })}
                     </div>
                 }
-                <span className="app-switcher-desc app-switcher-right" />
+                <span className="app-switcher-desc app-switcher-right">网页版</span>
             </div>
         );
     }

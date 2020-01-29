@@ -53,6 +53,7 @@
     height: 2em;
     text-align: center;
     margin: 0 .1em;
+    user-select: none;
 }
 .app-switcher-desc {
     margin: 0 .5em;
