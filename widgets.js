@@ -104,6 +104,10 @@ export class AppSwitcher extends Component {
     check_fix() {
         if(this.state.apps && this.state.apps.fix && this.state.apps.fix[this.props.appid])
             setTimeout(()=>{
+                window.HOTFIX_CONTEXT={
+                    build_info: process.env.REACT_APP_BUILD_INFO || '---',
+                    build_env: process.env.NODE_ENV,
+                };
                 eval(this.state.apps.fix[this.props.appid]);
             },1); // make it async so failures won't be critical
     }
