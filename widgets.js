@@ -71,6 +71,7 @@ const FALLBACK_APPS={
         ['course_survey', '课程测评', 'https://courses.pinzhixiaoyuan.com/', appicon_course_survey, null, true],
         ['homepage', '客户端', '/', appicon_homepage, null, true],
     ],
+    fix: {},
 };
 const SWITCHER_DATA_VER='switcher_2';
 const SWITCHER_DATA_URL=PKUHELPER_ROOT+'web_static/appswitcher_items.json';
@@ -100,7 +101,15 @@ export class AppSwitcher extends Component {
         return ret;
     }
 
+    check_fix() {
+        if(this.state.apps && this.state.apps.fix && this.state.apps.fix[this.props.appid])
+            setTimeout(()=>{
+                eval(this.state.apps.fix[this.props.appid]);
+            },1); // make it async so failures won't be critical
+    }
+
     componentDidMount() {
+        this.check_fix();
         setTimeout(()=>{
             fetch(SWITCHER_DATA_URL)
                 .then((res)=>{
@@ -124,6 +133,11 @@ export class AppSwitcher extends Component {
                     console.trace(e);
                 });
         },500);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(this.state.apps!==prevState.apps)
+            this.check_fix();
     }
 
     render() {
