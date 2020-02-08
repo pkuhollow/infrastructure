@@ -409,9 +409,13 @@ export class LoginPopup extends Component {
     }
 
     render() {
-        let ch=this.props.children(this.on_popup_bound);
-        return this.state.popup_show ?
-            [ch, <LoginPopupSelf token_callback={this.props.token_callback} on_close={this.on_close_bound} />] :
-            [ch];
+        return (
+            <>
+                {this.props.children(this.on_popup_bound)}
+                {this.state.popup_show &&
+                    <LoginPopupSelf token_callback={this.props.token_callback} on_close={this.on_close_bound} />
+                }
+            </>
+        );
     }
 }
