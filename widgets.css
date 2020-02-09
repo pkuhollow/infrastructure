@@ -231,8 +231,9 @@ a.app-switcher-item, .app-switcher-item a {
 /* override ant design */
 .pkuhelper-login-popup input, .pkuhelper-login-popup button {
     font-size: .85em;
+    vertical-align: middle;
 }
-.pkuhelper-login-popup input {
+.pkuhelper-login-popup input:not([type="checkbox"]) {
     width: 8rem;
     border-radius: 5px;
     border: 1px solid black;
@@ -271,6 +272,12 @@ a.app-switcher-item, .app-switcher-item a {
     height: 100%;
     width: 100%;
     z-index: 114514;
+}
+
+.pkuhelper-login-popup label.perm-item {
+    font-size: .8em;
+    vertical-align: .1rem;
+    margin-left: .5rem;
 }
 
 .aux-margin {

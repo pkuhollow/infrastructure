@@ -20,7 +20,6 @@ import appicon_homepage from './appicon/homepage.png';
 import {PKUHELPER_ROOT} from './const';
 import {get_json, API_VERSION_PARAM} from './functions';
 
-const LOGIN_BASE=PKUHELPER_ROOT+'services/login';
 const LOGIN_POPUP_ANCHOR_ID='pkuhelper_login_popup_anchor';
 
 function pad2(x) {
@@ -215,6 +214,7 @@ class LoginPopupSelf extends Component {
         super(props);
         this.state={
             loading_status: 'idle',
+            excluded_scopes: null,
         };
         this.username_ref=React.createRef();
         this.password_ref=React.createRef();
@@ -228,7 +228,7 @@ class LoginPopupSelf extends Component {
         }
     }
 
-    do_sendcode(api_name) {
+    do_sendcode(type) {
         if(this.state.loading_status==='loading')
             return;
 
@@ -236,9 +236,18 @@ class LoginPopupSelf extends Component {
             loading_status: 'loading',
         },()=>{
             fetch(
-                PKUHELPER_ROOT+'api_xmcp/isop/'+api_name
+                PKUHELPER_ROOT+'api_xmcp/login/send_code'
                 +'?user='+encodeURIComponent(this.username_ref.current.value)
-                +API_VERSION_PARAM()
+                +'&code_type='+encodeURIComponent(type)
+                +API_VERSION_PARAM(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        excluded_scopes: this.state.excluded_scopes||[],
+                    }),
+                }
             )
                 .then(get_json)
                 .then((json)=>{
@@ -269,17 +278,20 @@ class LoginPopupSelf extends Component {
         this.setState({
             loading_status: 'loading',
         },()=>{
-            let data=new URLSearchParams();
-            data.append('username', this.username_ref.current.value);
-            data.append('valid_code', this.password_ref.current.value);
-            data.append('isnewloginflow', 'true');
-            fetch(LOGIN_BASE+'/login.php?platform=webhole'+API_VERSION_PARAM(), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: data,
-            })
+            fetch(
+                PKUHELPER_ROOT+'api_xmcp/login/login'
+                +'?user='+encodeURIComponent(this.username_ref.current.value)
+                +'&valid_code='+encodeURIComponent(this.password_ref.current.value)
+                +API_VERSION_PARAM(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        excluded_scopes: this.state.excluded_scopes||[],
+                    }),
+                }
+            )
                 .then(get_json)
                 .then((json)=>{
                     if(json.code!==0) {
@@ -335,13 +347,52 @@ class LoginPopupSelf extends Component {
         });
     }
 
+    on_perm_click(e) {
+        if(e.ctrlKey && e.altKey)
+            this.setState({
+                excluded_scopes: [],
+            });
+    }
+
     render() {
+        let PERM_SCOPES=[
+            ['score','成绩查询'],
+            ['syllabus','课表查询'],
+            ['my_info','个人信息'],
+        ];
+
         return ReactDOM.createPortal(
             <div>
                 <div className="pkuhelper-login-popup-shadow" />
                 <div className="pkuhelper-login-popup">
                     <p>
-                        接收验证码来登录 PKU Helper
+                        {this.state.excluded_scopes===null ?
+                            <span onClick={this.on_perm_click.bind(this)}>接收验证码来登录 PKU Helper</span> :
+                            <span>
+                                授权功能
+                                {PERM_SCOPES.map(([scope,title])=>(
+                                    <label key={scope} className="perm-item">
+                                        <input type="checkbox" checked={this.state.excluded_scopes.indexOf(scope)===-1} onChange={(e)=>{
+                                            let chk=e.target.checked;
+                                            this.setState((prevState)=>{
+                                                let exc=prevState.excluded_scopes.slice();
+                                                if(chk) { // remove from exc
+                                                    let pos=exc.indexOf(scope);
+                                                    if(pos!==-1)
+                                                        exc.splice(pos,1);
+                                                } else { // add to exc
+                                                    exc.push(scope);
+                                                }
+                                                return {
+                                                    excluded_scopes: exc,
+                                                };
+                                            });
+                                        }} />
+                                        {title}
+                                    </label>
+                                ))}
+                            </span>
+                        }
                     </p>
                     <p>
                         <label>
@@ -349,11 +400,11 @@ class LoginPopupSelf extends Component {
                             <input ref={this.username_ref} type="tel" autoFocus={true} />
                         </label>
                         <span className="pkuhelper-login-type">
-                                <a onClick={(e)=>this.do_sendcode('validcode')}>
+                                <a onClick={(e)=>this.do_sendcode('sms')}>
                                     &nbsp;短信&nbsp;
                                 </a>
                                 /
-                                <a onClick={(e)=>this.do_sendcode('validcode2mail')}>
+                                <a onClick={(e)=>this.do_sendcode('mail')}>
                                     &nbsp;邮件&nbsp;
                                 </a>
                             </span>
