@@ -214,7 +214,7 @@ class LoginPopupSelf extends Component {
         super(props);
         this.state={
             loading_status: 'idle',
-            excluded_scopes: null,
+            excluded_scopes: [],
         };
         this.username_ref=React.createRef();
         this.password_ref=React.createRef();
@@ -347,18 +347,15 @@ class LoginPopupSelf extends Component {
         });
     }
 
-    on_perm_click(e) {
-        if(e.ctrlKey && e.altKey)
-            this.setState({
-                excluded_scopes: [],
-            });
+    perm_alert() {
+        alert('如果你不需要 PKU Helper 的某项功能，可以取消相应权限。\n其中【状态信息】包括你的网费、校园卡余额等。\n该设置应用到你的【所有】设备，取消后如需再次启用相应功能需要重新登录。');
     }
 
     render() {
         let PERM_SCOPES=[
             ['score','成绩查询'],
             ['syllabus','课表查询'],
-            ['my_info','个人信息'],
+            ['my_info','状态信息'],
         ];
 
         return ReactDOM.createPortal(
@@ -366,33 +363,31 @@ class LoginPopupSelf extends Component {
                 <div className="pkuhelper-login-popup-shadow" />
                 <div className="pkuhelper-login-popup">
                     <p>
-                        {this.state.excluded_scopes===null ?
-                            <span onClick={this.on_perm_click.bind(this)}>接收验证码来登录 PKU Helper</span> :
-                            <span>
-                                授权功能
-                                {PERM_SCOPES.map(([scope,title])=>(
-                                    <label key={scope} className="perm-item">
-                                        <input type="checkbox" checked={this.state.excluded_scopes.indexOf(scope)===-1} onChange={(e)=>{
-                                            let chk=e.target.checked;
-                                            this.setState((prevState)=>{
-                                                let exc=prevState.excluded_scopes.slice();
-                                                if(chk) { // remove from exc
-                                                    let pos=exc.indexOf(scope);
-                                                    if(pos!==-1)
-                                                        exc.splice(pos,1);
-                                                } else { // add to exc
-                                                    exc.push(scope);
-                                                }
-                                                return {
-                                                    excluded_scopes: exc,
-                                                };
-                                            });
-                                        }} />
-                                        {title}
-                                    </label>
-                                ))}
-                            </span>
-                        }
+                        <b>接收验证码来登录 PKU Helper</b>
+                    </p>
+                    <p>
+                        授权功能<a onClick={this.perm_alert.bind(this)}>(?)</a>
+                        {PERM_SCOPES.map(([scope,title])=>(
+                            <label key={scope} className="perm-item">
+                                <input type="checkbox" checked={this.state.excluded_scopes.indexOf(scope)===-1} onChange={(e)=>{
+                                    let chk=e.target.checked;
+                                    this.setState((prevState)=>{
+                                        let exc=prevState.excluded_scopes.slice();
+                                        if(chk) { // remove from exc
+                                            let pos=exc.indexOf(scope);
+                                            if(pos!==-1)
+                                                exc.splice(pos,1);
+                                        } else { // add to exc
+                                            exc.push(scope);
+                                        }
+                                        return {
+                                            excluded_scopes: exc,
+                                        };
+                                    });
+                                }} />
+                                {title}
+                            </label>
+                        ))}
                     </p>
                     <p>
                         <label>
@@ -420,7 +415,9 @@ class LoginPopupSelf extends Component {
                         </button>
                     </p>
                     <hr />
-                    <p>从其他设备导入登录状态</p>
+                    <p>
+                        <b>从其他设备导入登录状态</b>
+                    </p>
                     <p>
                         <input ref={this.input_token_ref} placeholder="User Token" />
                         <button type="button" disabled={this.state.loading_status==='loading'}

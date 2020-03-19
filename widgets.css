@@ -225,7 +225,7 @@ a.app-switcher-item, .app-switcher-item a {
     color: #00c;
 }
 .pkuhelper-login-popup p {
-    margin: 1em 0;
+    margin: .75em 0;
     text-align: center;
 }
 /* override ant design */
