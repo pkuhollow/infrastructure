@@ -145,14 +145,12 @@ a.app-switcher-item, .app-switcher-item a {
     color: white !important;
 }
 
-.root-dark-mode .app-switcher-item {
+.root-dark-mode .app-switcher-item, .root-dark-mode .app-switcher-dropdown-title a {
     color: var(--foreground-dark);
-    opacity: .8;
 }
-.root-dark-mode .app-switcher-item:hover, .root-dark-mode .app-switcher-item-current {
+.root-dark-mode .app-switcher-item:hover, .root-dark-mode .app-switcher-item-current, .root-dark-mode .app-switcher-dropdown-title:hover a {
     background-color: #555;
     color: var(--foreground-dark);
-    opacity: 1;
 }
 
 .app-switcher-item:hover .app-switcher-logo-normal, .app-switcher-item-current .app-switcher-logo-normal {
