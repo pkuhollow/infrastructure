@@ -360,8 +360,8 @@ class LoginPopupSelf extends Component {
 
         return ReactDOM.createPortal(
             <div>
-                <div className="pkuhelper-login-popup-shadow" />
-                <div className="pkuhelper-login-popup">
+                <div className="thuhole-login-popup-shadow" />
+                <div className="thuhole-login-popup">
                     <p>
                         <b>接收验证码来登录 T大树洞</b>
                     </p>
@@ -370,7 +370,7 @@ class LoginPopupSelf extends Component {
                             　邮箱&nbsp;
                             <input ref={this.username_ref} type="email" autoFocus={true} defaultValue="@mails.tsinghua.edu.cn" />
                         </label>
-                        <span className="pkuhelper-login-type">
+                        <span className="thuhole-login-type">
                                 {/*<a onClick={(e)=>this.do_sendcode('sms')}>*/}
                                 {/*    &nbsp;短信&nbsp;*/}
                                 {/*</a>*/}
