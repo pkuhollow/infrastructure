@@ -295,3 +295,7 @@ a.app-switcher-item, .app-switcher-item a {
     padding-top: 1rem;
     text-align: center;
 }
+
+.time-str {
+    color: #999999;
+}

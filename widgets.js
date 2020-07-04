@@ -32,7 +32,7 @@ const chinese_format=buildFormatter(chineseStrings);
 export function Time(props) {
     const time=new Date(props.stamp*1000);
     return (
-        <span>
+        <span className={"time-str"}>
             <TimeAgo date={time} formatter={chinese_format} title={time.toLocaleString('zh-CN', {
                 timeZone: 'Asia/Shanghai',
                 hour12: false,
