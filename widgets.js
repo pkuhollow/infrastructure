@@ -20,6 +20,11 @@ import appicon_homepage from './appicon/homepage.png';
 import {THUHOLE_API_ROOT} from './const';
 import {get_json, API_VERSION_PARAM} from './functions';
 
+import {
+    GoogleReCaptchaProvider,
+    GoogleReCaptcha
+} from 'react-google-recaptcha-v3';
+
 const LOGIN_POPUP_ANCHOR_ID='pkuhelper_login_popup_anchor';
 
 function pad2(x) {
@@ -239,6 +244,7 @@ class LoginPopupSelf extends Component {
                 THUHOLE_API_ROOT+'api_xmcp/login/send_code'
                 +'?user='+encodeURIComponent(this.username_ref.current.value)
                 +'&code_type='+encodeURIComponent(type)
+                +"&recaptcha_token="+localStorage["recaptcha"]
                 +API_VERSION_PARAM(), {
                     method: 'POST',
                     headers: {
@@ -359,6 +365,8 @@ class LoginPopupSelf extends Component {
         // ];
 
         return ReactDOM.createPortal(
+            <GoogleReCaptchaProvider reCaptchaKey={"6Leq0a0ZAAAAAHEStocsqtJfKEs9APB0LdgzTNfZ"} useRecaptchaNet={true}>
+            <GoogleReCaptcha onVerify={token => localStorage["recaptcha"] = token} />
             <div>
                 <div className="thuhole-login-popup-shadow" />
                 <div className="thuhole-login-popup">
@@ -408,7 +416,8 @@ class LoginPopupSelf extends Component {
                         </button>
                     </p>
                 </div>
-            </div>,
+            </div>
+            </GoogleReCaptchaProvider>,
             this.popup_anchor,
         );
     }
