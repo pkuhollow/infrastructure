@@ -410,6 +410,11 @@ class LoginPopupSelf extends Component {
                         </button>
                     </p>
                     <hr />
+                    <p style={{fontSize:11}}>
+                        This site is protected by reCAPTCHA and the Google <a
+                        href="https://policies.google.com/privacy">Privacy Policy</a> and <a
+                        href="https://policies.google.com/terms">Terms of Service</a> apply.
+                    </p>
                     <p>
                         <button onClick={this.props.on_close}>
                             取消
