@@ -219,6 +219,7 @@ class LoginPopupSelf extends Component {
         super(props);
         this.state={
             loading_status: 'idle',
+            recaptcha_verified: false
             // excluded_scopes: [],
         };
         this.username_ref=React.createRef();
@@ -234,6 +235,10 @@ class LoginPopupSelf extends Component {
     }
 
     do_sendcode(type) {
+        if(!this.state.recaptcha_verified) {
+            alert("reCAPTCHA风控系统正在评估您的浏览器安全状态，请稍后重试。")
+            return
+        }
         if(this.state.loading_status==='loading')
             return;
 
@@ -366,7 +371,12 @@ class LoginPopupSelf extends Component {
 
         return ReactDOM.createPortal(
             <GoogleReCaptchaProvider reCaptchaKey={"6Leq0a0ZAAAAAHEStocsqtJfKEs9APB0LdgzTNfZ"} useRecaptchaNet={true}>
-            <GoogleReCaptcha onVerify={token => localStorage["recaptcha"] = token} />
+            <GoogleReCaptcha onVerify={(token) => {
+                this.setState({
+                    recaptcha_verified: true,
+                });
+                localStorage["recaptcha"] = token
+            }} />
             <div>
                 <div className="thuhole-login-popup-shadow" />
                 <div className="thuhole-login-popup">
