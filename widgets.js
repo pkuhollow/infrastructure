@@ -43,7 +43,7 @@ export function Time(props) {
                 hour12: false,
             })} />
             &nbsp;
-            {format_time(time)}
+            {!props.short ? format_time(time) : null}
         </span>
     );
 }
