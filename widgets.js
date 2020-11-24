@@ -1,4 +1,4 @@
-import React, {Component, PureComponent} from 'react';
+import React, { Component, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 
 import TimeAgo from 'react-timeago';
@@ -17,68 +17,89 @@ import appicon_course_survey from './appicon/course_survey.png';
 import appicon_dropdown from './appicon/dropdown.png';
 import appicon_dropdown_rev from './appicon/dropdown_rev.png';
 import appicon_homepage from './appicon/homepage.png';
-import {THUHOLE_API_ROOT} from './const';
-import {get_json, API_VERSION_PARAM} from './functions';
+import { THUHOLE_API_ROOT } from './const';
+import { get_json, API_VERSION_PARAM } from './functions';
 
 import {
-    GoogleReCaptchaProvider,
-    GoogleReCaptcha
+  GoogleReCaptchaProvider,
+  GoogleReCaptcha,
 } from 'react-google-recaptcha-v3';
+import ReCAPTCHA from 'react-google-recaptcha';
 
-const LOGIN_POPUP_ANCHOR_ID='pkuhelper_login_popup_anchor';
+const LOGIN_POPUP_ANCHOR_ID = 'pkuhelper_login_popup_anchor';
 
 function pad2(x) {
-    return x<10 ? '0'+x : ''+x;
+  return x < 10 ? '0' + x : '' + x;
 }
 export function format_time(time) {
-    return `${time.getMonth()+1}-${pad2(time.getDate())} ${time.getHours()}:${pad2(time.getMinutes())}:${pad2(time.getSeconds())}`;
+  return `${time.getMonth() + 1}-${pad2(
+    time.getDate(),
+  )} ${time.getHours()}:${pad2(time.getMinutes())}:${pad2(time.getSeconds())}`;
 }
-const chinese_format=buildFormatter(chineseStrings);
+const chinese_format = buildFormatter(chineseStrings);
 export function Time(props) {
-    const time=new Date(props.stamp*1000);
-    return (
-        <span className={"time-str"}>
-            <TimeAgo date={time} formatter={chinese_format} title={time.toLocaleString('zh-CN', {
-                timeZone: 'Asia/Shanghai',
-                hour12: false,
-            })} />
-            &nbsp;
-            {!props.short ? format_time(time) : null}
-        </span>
-    );
+  const time = new Date(props.stamp * 1000);
+  return (
+    <span className={'time-str'}>
+      <TimeAgo
+        date={time}
+        formatter={chinese_format}
+        title={time.toLocaleString('zh-CN', {
+          timeZone: 'Asia/Shanghai',
+          hour12: false,
+        })}
+      />
+      &nbsp;
+      {!props.short ? format_time(time) : null}
+    </span>
+  );
 }
 
 export function TitleLine(props) {
-    return (
-        <p className="centered-line title-line aux-margin">
-            <span className="black-outline">{props.text}</span>
-        </p>
-    )
+  return (
+    <p className="centered-line title-line aux-margin">
+      <span className="black-outline">{props.text}</span>
+    </p>
+  );
 }
 
 export function GlobalTitle(props) {
-    return (
-        <div className="aux-margin">
-            <div className="title">
-                <p className="centered-line">{props.text}</p>
-            </div>
-        </div>
-    );
+  return (
+    <div className="aux-margin">
+      <div className="title">
+        <p className="centered-line">{props.text}</p>
+      </div>
+    </div>
+  );
 }
 
-const FALLBACK_APPS={
-    // id, text, url, icon_normal, icon_hover, new_tab
-    bar: [
-        ['hole', '树洞', '/hole', appicon_hole, null, false],
-        ['imasugu', '教室', '/spare_classroom', appicon_imasugu, appicon_imasugu_rev, false],
-        ['syllabus', '课表', '/syllabus', appicon_syllabus, null, false],
-        ['score', '成绩', '/my_score', appicon_score, null, false],
+const FALLBACK_APPS = {
+  // id, text, url, icon_normal, icon_hover, new_tab
+  bar: [
+    ['hole', '树洞', '/hole', appicon_hole, null, false],
+    [
+      'imasugu',
+      '教室',
+      '/spare_classroom',
+      appicon_imasugu,
+      appicon_imasugu_rev,
+      false,
     ],
-    dropdown: [
-        ['course_survey', '课程测评', 'https://courses.pinzhixiaoyuan.com/', appicon_course_survey, null, true],
-        ['homepage', '客户端', '/', appicon_homepage, null, true],
+    ['syllabus', '课表', '/syllabus', appicon_syllabus, null, false],
+    ['score', '成绩', '/my_score', appicon_score, null, false],
+  ],
+  dropdown: [
+    [
+      'course_survey',
+      '课程测评',
+      'https://courses.pinzhixiaoyuan.com/',
+      appicon_course_survey,
+      null,
+      true,
     ],
-    fix: {},
+    ['homepage', '客户端', '/', appicon_homepage, null, true],
+  ],
+  fix: {},
 };
 // const SWITCHER_DATA_VER='switcher_2';
 // const SWITCHER_DATA_URL=THUHOLE_API_ROOT+'web_static/appswitcher_items.json';
@@ -214,259 +235,391 @@ const FALLBACK_APPS={
 //     }
 // }
 
-class LoginPopupSelf extends Component {
-    constructor(props) {
-        super(props);
-        this.state={
-            loading_status: 'idle',
-            recaptcha_verified: false
-            // excluded_scopes: [],
-        };
-        this.username_ref=React.createRef();
-        this.password_ref=React.createRef();
-        this.input_token_ref=React.createRef();
+class RecaptchaV2Popup extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.onChange = this.onChange.bind(this);
+    this.state = {
+      popup_show: false,
+    };
+    this.on_popup_bound = this.on_popup.bind(this);
+    this.on_close_bound = this.on_close.bind(this);
+  }
 
-        this.popup_anchor=document.getElementById(LOGIN_POPUP_ANCHOR_ID);
-        if(!this.popup_anchor) {
-            this.popup_anchor=document.createElement('div');
-            this.popup_anchor.id=LOGIN_POPUP_ANCHOR_ID;
-            document.body.appendChild(this.popup_anchor);
-        }
+  on_popup() {
+    this.setState({
+      popup_show: true,
+    });
+  }
+  on_close() {
+    this.setState({
+      popup_show: false,
+    });
+  }
+
+  componentDidMount() {
+    if (this.captchaRef) {
+      console.log('started, just a second...');
+      this.captchaRef.reset();
+      this.captchaRef.execute();
     }
+  }
+  onChange(recaptchaToken) {
+    localStorage['recaptcha'] = recaptchaToken;
+    this.setState({
+      popup_show: false,
+    });
+    this.props.callback();
+  }
 
-    do_sendcode(type) {
-        if(!this.state.recaptcha_verified) {
-            alert("reCAPTCHA风控系统正在评估您的浏览器安全状态，请稍后重试。")
-            return
-        }
-        if(this.state.loading_status==='loading')
-            return;
+  render() {
+    return (
+      <>
+        {this.props.children(this.on_popup_bound)}
+        {this.state.popup_show && (
+          <div>
+            <div className="thuhole-login-popup-shadow" />
+            <div className="thuhole-login-popup">
+              <div className="g-recaptcha">
+                <ReCAPTCHA
+                  ref={(el) => {
+                    this.captchaRef = el;
+                  }}
+                  sitekey="6LdPSa4ZAAAAAIeoB22GChKqrF1H0R_BaEGGz7Hf"
+                  // size={"compact"}
+                  onChange={this.onChange}
+                />
+              </div>
 
-        this.setState({
-            loading_status: 'loading',
-        },()=>{
-            fetch(
-                THUHOLE_API_ROOT+'api_xmcp/login/send_code'
-                +'?user='+encodeURIComponent(this.username_ref.current.value)
-                +'&code_type='+encodeURIComponent(type)
-                +"&recaptcha_token="+localStorage["recaptcha"]
-                +API_VERSION_PARAM(), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        excluded_scopes: [],
-                    }),
-                }
-            )
-                .then(get_json)
-                .then((json)=>{
-                    console.log(json);
-                    if(!json.success)
-                        throw new Error(JSON.stringify(json));
-
-                    alert(json.msg);
-                    this.setState({
-                        loading_status: 'done',
-                    });
-                })
-                .catch((e)=>{
-                    console.error(e);
-                    alert('发送失败\n'+e);
-                    this.setState({
-                        loading_status: 'done',
-                    });
-                });
-
-        });
-    }
-
-    do_login(set_token) {
-        if(this.state.loading_status==='loading')
-            return;
-
-        this.setState({
-            loading_status: 'loading',
-        },()=>{
-            fetch(
-                THUHOLE_API_ROOT+'api_xmcp/login/login'
-                +'?user='+encodeURIComponent(this.username_ref.current.value)
-                +'&valid_code='+encodeURIComponent(this.password_ref.current.value)
-                +API_VERSION_PARAM(), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        excluded_scopes: [],
-                    }),
-                }
-            )
-                .then(get_json)
-                .then((json)=>{
-                    if(json.code!==0) {
-                        if(json.msg) throw new Error(json.msg);
-                        throw new Error(JSON.stringify(json));
-                    }
-
-                    set_token(json.user_token);
-                    alert(`登录成功`);
-                    this.setState({
-                        loading_status: 'done',
-                    });
-                    this.props.on_close();
-                })
-                .catch((e)=>{
-                    console.error(e);
-                    alert('登录失败\n'+e);
-                    this.setState({
-                        loading_status: 'done',
-                    });
-                });
-        });
-    }
-
-    do_input_token(set_token) {
-        if(this.state.loading_status==='loading')
-            return;
-
-        let token=this.input_token_ref.current.value;
-        this.setState({
-            loading_status: 'loading',
-        },()=>{
-            fetch(THUHOLE_API_ROOT+'api_xmcp/hole/system_msg?user_token='+encodeURIComponent(token)+API_VERSION_PARAM())
-                .then((res)=>res.json())
-                .then((json)=>{
-                    if(json.error)
-                        throw new Error(json.error);
-                    if(json.result.length===0)
-                        throw new Error('result check failed');
-                    this.setState({
-                        loading_status: 'done',
-                    });
-                    set_token(token);
-                    this.props.on_close();
-                })
-                .catch((e)=>{
-                    alert('Token检验失败\n'+e);
-                    this.setState({
-                        loading_status: 'done',
-                    });
-                    console.error(e);
-                });
-        });
-    }
-
-    // perm_alert() {
-    //     alert('如果你不需要 PKU Helper 的某项功能，可以取消相应权限。\n其中【状态信息】包括你的网费、校园卡余额等。\n该设置应用到你的【所有】设备，取消后如需再次启用相应功能需要重新登录。');
-    // }
-
-    render() {
-        // let PERM_SCOPES=[
-        //     ['score','成绩查询'],
-        //     ['syllabus','课表查询'],
-        //     ['my_info','状态信息'],
-        // ];
-
-        return ReactDOM.createPortal(
-            <GoogleReCaptchaProvider reCaptchaKey={"6Leq0a0ZAAAAAHEStocsqtJfKEs9APB0LdgzTNfZ"} useRecaptchaNet={true}>
-            <GoogleReCaptcha onVerify={(token) => {
-                this.setState({
-                    recaptcha_verified: true,
-                });
-                localStorage["recaptcha"] = token
-            }} />
-            <div>
-                <div className="thuhole-login-popup-shadow" />
-                <div className="thuhole-login-popup">
-                    <p>
-                        <b>接收验证码来登录 T大树洞</b>
-                    </p>
-                    <p>
-                        <label>
-                            　邮箱&nbsp;
-                            <input ref={this.username_ref} type="email" autoFocus={true} defaultValue="@mails.tsinghua.edu.cn" />
-                        </label>
-                        <span className="thuhole-login-type">
-                                {/*<a onClick={(e)=>this.do_sendcode('sms')}>*/}
-                                {/*    &nbsp;短信&nbsp;*/}
-                                {/*</a>*/}
-                                {/*/*/}
-                                <a onClick={(e)=>this.do_sendcode('mail')}>
-                                    &nbsp;发送邮件&nbsp;
-                                </a>
-                            </span>
-                    </p>
-                    <p>
-                        <label>
-                            验证码&nbsp;
-                            <input ref={this.password_ref} type="tel" />
-                        </label>
-                        <button type="button" disabled={this.state.loading_status==='loading'}
-                                onClick={(e)=>this.do_login(this.props.token_callback)}>
-                            登录
-                        </button>
-                    </p>
-                    <hr />
-                    <p>
-                        <b>从其他设备导入登录状态</b>
-                    </p>
-                    <p>
-                        <input ref={this.input_token_ref} placeholder="User Token" />
-                        <button type="button" disabled={this.state.loading_status==='loading'}
-                                onClick={(e)=>this.do_input_token(this.props.token_callback)}>
-                            导入
-                        </button>
-                    </p>
-                    <hr />
-                    <p style={{fontSize:11}}>
-                        This site is protected by reCAPTCHA and the Google <a
-                        href="https://policies.google.com/privacy">Privacy Policy</a> and <a
-                        href="https://policies.google.com/terms">Terms of Service</a> apply.
-                    </p>
-                    <p>
-                        <button onClick={this.props.on_close}>
-                            取消
-                        </button>
-                    </p>
-                </div>
+              <p>
+                <button onClick={this.on_close_bound}>取消</button>
+              </p>
             </div>
-            </GoogleReCaptchaProvider>,
-            this.popup_anchor,
-        );
+          </div>
+        )}
+      </>
+    );
+  }
+}
+
+class LoginPopupSelf extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading_status: 'idle',
+      recaptcha_verified: false,
+      // excluded_scopes: [],
+    };
+    this.username_ref = React.createRef();
+    this.password_ref = React.createRef();
+    this.input_token_ref = React.createRef();
+
+    this.popup_anchor = document.getElementById(LOGIN_POPUP_ANCHOR_ID);
+    if (!this.popup_anchor) {
+      this.popup_anchor = document.createElement('div');
+      this.popup_anchor.id = LOGIN_POPUP_ANCHOR_ID;
+      document.body.appendChild(this.popup_anchor);
     }
+  }
+
+  do_sendcode(type, do_popup, recaptcha_version) {
+    if (!this.state.recaptcha_verified) {
+      alert('reCAPTCHA风控系统正在评估您的浏览器安全状态，请稍后重试。');
+      return;
+    }
+    if (this.state.loading_status === 'loading') return;
+
+    this.setState(
+      {
+        loading_status: 'loading',
+      },
+      () => {
+        fetch(
+          THUHOLE_API_ROOT +
+            'api_xmcp/login/send_code' +
+            '?user=' +
+            encodeURIComponent(this.username_ref.current.value) +
+            '&code_type=' +
+            encodeURIComponent(type) +
+            '&recaptcha_version=' +
+            encodeURIComponent(recaptcha_version) +
+            '&recaptcha_token=' +
+            localStorage['recaptcha'] +
+            API_VERSION_PARAM(),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              excluded_scopes: [],
+            }),
+          },
+        )
+          .then(get_json)
+          .then((json) => {
+            console.log(json);
+            if (!json.success) throw new Error(JSON.stringify(json));
+
+            alert(json.msg);
+            this.setState({
+              loading_status: 'done',
+            });
+          })
+          .catch((e) => {
+            console.error(e);
+
+            if (e.toString().includes('风控系统校验失败')) {
+              // alert('TODO: use recaptcha v2');
+              this.setState({
+                loading_status: 'done',
+              });
+              do_popup();
+            } else {
+              alert('发送失败\n' + e);
+              this.setState({
+                loading_status: 'done',
+              });
+            }
+          });
+      },
+    );
+  }
+
+  do_login(set_token) {
+    if (this.state.loading_status === 'loading') return;
+
+    this.setState(
+      {
+        loading_status: 'loading',
+      },
+      () => {
+        fetch(
+          THUHOLE_API_ROOT +
+            'api_xmcp/login/login' +
+            '?user=' +
+            encodeURIComponent(this.username_ref.current.value) +
+            '&valid_code=' +
+            encodeURIComponent(this.password_ref.current.value) +
+            API_VERSION_PARAM(),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              excluded_scopes: [],
+            }),
+          },
+        )
+          .then(get_json)
+          .then((json) => {
+            if (json.code !== 0) {
+              if (json.msg) throw new Error(json.msg);
+              throw new Error(JSON.stringify(json));
+            }
+
+            set_token(json.user_token);
+            alert(`登录成功`);
+            this.setState({
+              loading_status: 'done',
+            });
+            this.props.on_close();
+          })
+          .catch((e) => {
+            console.error(e);
+            alert('登录失败\n' + e);
+            this.setState({
+              loading_status: 'done',
+            });
+          });
+      },
+    );
+  }
+
+  do_input_token(set_token) {
+    if (this.state.loading_status === 'loading') return;
+
+    let token = this.input_token_ref.current.value;
+    this.setState(
+      {
+        loading_status: 'loading',
+      },
+      () => {
+        fetch(
+          THUHOLE_API_ROOT +
+            'api_xmcp/hole/system_msg?user_token=' +
+            encodeURIComponent(token) +
+            API_VERSION_PARAM(),
+        )
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.error) throw new Error(json.error);
+            if (json.result.length === 0)
+              throw new Error('result check failed');
+            this.setState({
+              loading_status: 'done',
+            });
+            set_token(token);
+            this.props.on_close();
+          })
+          .catch((e) => {
+            alert('Token检验失败\n' + e);
+            this.setState({
+              loading_status: 'done',
+            });
+            console.error(e);
+          });
+      },
+    );
+  }
+
+  // perm_alert() {
+  //     alert('如果你不需要 PKU Helper 的某项功能，可以取消相应权限。\n其中【状态信息】包括你的网费、校园卡余额等。\n该设置应用到你的【所有】设备，取消后如需再次启用相应功能需要重新登录。');
+  // }
+
+  render() {
+    // let PERM_SCOPES=[
+    //     ['score','成绩查询'],
+    //     ['syllabus','课表查询'],
+    //     ['my_info','状态信息'],
+    // ];
+    window.recaptchaOptions = {
+      useRecaptchaNet: true,
+    };
+    return ReactDOM.createPortal(
+      <GoogleReCaptchaProvider
+        reCaptchaKey={'6Leq0a0ZAAAAAHEStocsqtJfKEs9APB0LdgzTNfZ'}
+        useRecaptchaNet={true}
+      >
+        <GoogleReCaptcha
+          onVerify={(token) => {
+            this.setState({
+              recaptcha_verified: true,
+            });
+            localStorage['recaptcha'] = token;
+          }}
+        />
+        <div>
+          <div className="thuhole-login-popup-shadow" />
+          <div className="thuhole-login-popup">
+            <p>
+              <b>接收验证码来登录 T大树洞</b>
+            </p>
+            <p>
+              <label>
+                　邮箱&nbsp;
+                <input
+                  ref={this.username_ref}
+                  type="email"
+                  autoFocus={true}
+                  defaultValue="@mails.tsinghua.edu.cn"
+                />
+              </label>
+              <span className="thuhole-login-type">
+                {/*<a onClick={(e)=>this.do_sendcode('sms')}>*/}
+                {/*    &nbsp;短信&nbsp;*/}
+                {/*</a>*/}
+                {/*/*/}
+                <RecaptchaV2Popup
+                  callback={() => {
+                    this.do_sendcode(
+                      'mail',
+                      () => {
+                        alert('风控系统校验失败');
+                      },
+                      'v2',
+                    );
+                  }}
+                >
+                  {(do_popup) => (
+                    <a
+                      onClick={(e) => this.do_sendcode('mail', do_popup, 'v3')}
+                    >
+                      &nbsp;发送邮件&nbsp;
+                    </a>
+                  )}
+                </RecaptchaV2Popup>
+              </span>
+            </p>
+            <p>
+              <label>
+                验证码&nbsp;
+                <input ref={this.password_ref} type="tel" />
+              </label>
+              <button
+                type="button"
+                disabled={this.state.loading_status === 'loading'}
+                onClick={(e) => this.do_login(this.props.token_callback)}
+              >
+                登录
+              </button>
+            </p>
+            <hr />
+            <p>
+              <b>从其他设备导入登录状态</b>
+            </p>
+            <p>
+              <input ref={this.input_token_ref} placeholder="User Token" />
+              <button
+                type="button"
+                disabled={this.state.loading_status === 'loading'}
+                onClick={(e) => this.do_input_token(this.props.token_callback)}
+              >
+                导入
+              </button>
+            </p>
+            <hr />
+            <p style={{ fontSize: 11 }}>
+              This site is protected by reCAPTCHA and the Google{' '}
+              <a href="https://policies.google.com/privacy">Privacy Policy</a>{' '}
+              and{' '}
+              <a href="https://policies.google.com/terms">Terms of Service</a>{' '}
+              apply.
+            </p>
+            <p>
+              <button onClick={this.props.on_close}>取消</button>
+            </p>
+          </div>
+        </div>
+      </GoogleReCaptchaProvider>,
+      this.popup_anchor,
+    );
+  }
 }
 
 export class LoginPopup extends Component {
-    constructor(props) {
-        super(props);
-        this.state={
-            popup_show: false,
-        };
-        this.on_popup_bound=this.on_popup.bind(this);
-        this.on_close_bound=this.on_close.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      popup_show: false,
+    };
+    this.on_popup_bound = this.on_popup.bind(this);
+    this.on_close_bound = this.on_close.bind(this);
+  }
 
-    on_popup() {
-        this.setState({
-            popup_show: true,
-        });
-    }
-    on_close() {
-        this.setState({
-            popup_show: false,
-        });
-    }
+  on_popup() {
+    this.setState({
+      popup_show: true,
+    });
+  }
+  on_close() {
+    this.setState({
+      popup_show: false,
+    });
+  }
 
-    render() {
-        return (
-            <>
-                {this.props.children(this.on_popup_bound)}
-                {this.state.popup_show &&
-                    <LoginPopupSelf token_callback={this.props.token_callback} on_close={this.on_close_bound} />
-                }
-            </>
-        );
-    }
+  render() {
+    return (
+      <>
+        {this.props.children(this.on_popup_bound)}
+        {this.state.popup_show && (
+          <LoginPopupSelf
+            token_callback={this.props.token_callback}
+            on_close={this.on_close_bound}
+          />
+        )}
+      </>
+    );
+  }
 }
