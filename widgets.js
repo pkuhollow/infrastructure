@@ -336,7 +336,7 @@ class LoginPopupSelf extends Component {
       () => {
         fetch(
           THUHOLE_API_ROOT +
-            'api_xmcp/login/send_code' +
+            'security/login/send_code' +
             '?user=' +
             encodeURIComponent(this.username_ref.current.value) +
             '&code_type=' +
@@ -370,7 +370,6 @@ class LoginPopupSelf extends Component {
             console.error(e);
 
             if (e.toString().includes('风控系统校验失败')) {
-              // alert('TODO: use recaptcha v2');
               this.setState({
                 loading_status: 'done',
               });
@@ -396,7 +395,7 @@ class LoginPopupSelf extends Component {
       () => {
         fetch(
           THUHOLE_API_ROOT +
-            'api_xmcp/login/login' +
+            'security/login/login' +
             '?user=' +
             encodeURIComponent(this.username_ref.current.value) +
             '&valid_code=' +
@@ -448,7 +447,7 @@ class LoginPopupSelf extends Component {
       () => {
         fetch(
           THUHOLE_API_ROOT +
-            'api_xmcp/hole/system_msg?user_token=' +
+            'contents/system_msg?user_token=' +
             encodeURIComponent(token) +
             API_VERSION_PARAM(),
         )
