@@ -491,14 +491,17 @@ class LoginPopupSelf extends Component {
         reCaptchaKey={'6Leq0a0ZAAAAAHEStocsqtJfKEs9APB0LdgzTNfZ'}
         useRecaptchaNet={true}
       >
-        <GoogleReCaptcha
-          onVerify={(token) => {
-            this.setState({
-              recaptcha_verified: true,
-            });
-            localStorage['recaptcha'] = token;
-          }}
-        />
+        {!this.state.recaptcha_verified && (
+          <GoogleReCaptcha
+            onVerify={(token) => {
+              this.setState({
+                recaptcha_verified: true,
+              });
+              console.log(token);
+              localStorage['recaptcha'] = token;
+            }}
+          />
+        )}
         <div>
           <div className="thuhole-login-popup-shadow" />
           <div className="thuhole-login-popup">
