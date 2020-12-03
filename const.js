@@ -1,2 +1,1 @@
-// export const THUHOLE_API_ROOT='//localhost:5001/';
-export const THUHOLE_API_ROOT = 'https://api.thuhole.com/'
+export const THUHOLE_API_ROOT=process.env.REACT_APP_API_ROOT;

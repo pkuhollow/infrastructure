@@ -285,7 +285,7 @@ class RecaptchaV2Popup extends Component {
                   ref={(el) => {
                     this.captchaRef = el;
                   }}
-                  sitekey="6LdPSa4ZAAAAAIeoB22GChKqrF1H0R_BaEGGz7Hf"
+                  sitekey={process.env.REACT_APP_RECAPTCHA_V2_KEY}
                   // size={"compact"}
                   onChange={this.onChange}
                 />
@@ -488,7 +488,7 @@ class LoginPopupSelf extends Component {
     };
     return ReactDOM.createPortal(
       <GoogleReCaptchaProvider
-        reCaptchaKey={'6Leq0a0ZAAAAAHEStocsqtJfKEs9APB0LdgzTNfZ'}
+        reCaptchaKey={process.env.REACT_APP_RECAPTCHA_V3_KEY}
         useRecaptchaNet={true}
       >
         {!this.state.recaptcha_verified && (
@@ -506,7 +506,7 @@ class LoginPopupSelf extends Component {
           <div className="thuhole-login-popup-shadow" />
           <div className="thuhole-login-popup">
             <p>
-              <b>接收验证码来登录 T大树洞</b>
+              <b>接收验证码来登录 {process.env.REACT_APP_TITLE}</b>
             </p>
             <p>
               <label>
