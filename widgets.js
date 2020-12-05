@@ -17,7 +17,7 @@ import appicon_course_survey from './appicon/course_survey.png';
 import appicon_dropdown from './appicon/dropdown.png';
 import appicon_dropdown_rev from './appicon/dropdown_rev.png';
 import appicon_homepage from './appicon/homepage.png';
-import { THUHOLE_API_ROOT } from './const';
+import { HOLE_API_ROOT } from './const';
 import { get_json, API_VERSION_PARAM } from './functions';
 
 import {
@@ -102,7 +102,7 @@ const FALLBACK_APPS = {
   fix: {},
 };
 // const SWITCHER_DATA_VER='switcher_2';
-// const SWITCHER_DATA_URL=THUHOLE_API_ROOT+'web_static/appswitcher_items.json';
+// const SWITCHER_DATA_URL=HOLE_API_ROOT+'web_static/appswitcher_items.json';
 
 // export class AppSwitcher extends Component {
 //     constructor(props) {
@@ -278,8 +278,8 @@ class RecaptchaV2Popup extends Component {
         {this.props.children(this.on_popup_bound)}
         {this.state.popup_show && (
           <div>
-            <div className="thuhole-login-popup-shadow" />
-            <div className="thuhole-login-popup">
+            <div className="login-popup-shadow" />
+            <div className="login-popup">
               <div className="g-recaptcha">
                 <ReCAPTCHA
                   ref={(el) => {
@@ -335,7 +335,7 @@ class LoginPopupSelf extends Component {
       },
       () => {
         fetch(
-          THUHOLE_API_ROOT +
+          HOLE_API_ROOT +
             'security/login/send_code' +
             '?user=' +
             encodeURIComponent(this.username_ref.current.value) +
@@ -394,7 +394,7 @@ class LoginPopupSelf extends Component {
       },
       () => {
         fetch(
-          THUHOLE_API_ROOT +
+          HOLE_API_ROOT +
             'security/login/login' +
             '?user=' +
             encodeURIComponent(this.username_ref.current.value) +
@@ -446,7 +446,7 @@ class LoginPopupSelf extends Component {
       },
       () => {
         fetch(
-          THUHOLE_API_ROOT +
+          HOLE_API_ROOT +
             'contents/system_msg?user_token=' +
             encodeURIComponent(token) +
             API_VERSION_PARAM(),
@@ -503,8 +503,8 @@ class LoginPopupSelf extends Component {
           />
         )}
         <div>
-          <div className="thuhole-login-popup-shadow" />
-          <div className="thuhole-login-popup">
+          <div className="login-popup-shadow" />
+          <div className="login-popup">
             <p>
               <b>接收验证码来登录 {process.env.REACT_APP_TITLE}</b>
             </p>
@@ -518,7 +518,7 @@ class LoginPopupSelf extends Component {
                   defaultValue="@mails.tsinghua.edu.cn"
                 />
               </label>
-              <span className="thuhole-login-type">
+              <span className="login-type">
                 {/*<a onClick={(e)=>this.do_sendcode('sms')}>*/}
                 {/*    &nbsp;短信&nbsp;*/}
                 {/*</a>*/}
