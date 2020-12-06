@@ -515,7 +515,7 @@ class LoginPopupSelf extends Component {
                   ref={this.username_ref}
                   type="email"
                   autoFocus={true}
-                  defaultValue="@mails.tsinghua.edu.cn"
+                  defaultValue={process.env.REACT_APP_DEFAULT_EMAIL_SUFFIX}
                 />
               </label>
               <span className="login-type">
